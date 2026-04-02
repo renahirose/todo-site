@@ -1,129 +1,161 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>My ToDo</title>
-  <style>
-    body {
-      font-family: "Arial", sans-serif;
-      background: #fef6ff;
-      color: #444;
-      text-align: center;
-      padding: 40px;
-    }
+<meta charset="UTF-8">
+<title>My Cute ToDo</title>
 
-    h1 {
-      color: #d291bc;
-    }
+<style>
+body {
+  font-family: sans-serif;
+  background: repeating-linear-gradient(
+    45deg,
+    #fef6ff,
+    #fef6ff 20px,
+    #f9f0ff 20px,
+    #f9f0ff 40px
+  );
+  text-align: center;
+  padding: 40px;
+}
 
-    .container {
-      background: #ffffff;
-      max-width: 400px;
-      margin: auto;
-      padding: 25px;
-      border-radius: 16px;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-    }
+h1 {
+  color: #d291bc;
+}
 
-    input {
-      padding: 10px;
-      width: 70%;
-      border: 2px solid #ffd6e0;
-      border-radius: 10px;
-      outline: none;
-    }
+.container {
+  background: white;
+  max-width: 420px;
+  margin: auto;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
 
-    button {
-      padding: 10px 15px;
-      border: none;
-      background: #ffd6e0;
-      border-radius: 10px;
-      cursor: pointer;
-    }
+img.main {
+  width: 120px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
 
-    ul {
-      list-style: none;
-      padding: 0;
-      margin-top: 20px;
-    }
+input {
+  padding: 10px;
+  width: 65%;
+  border: 2px solid #ffd6e0;
+  border-radius: 10px;
+}
 
-    li {
-      background: #f9f0ff;
-      margin: 8px 0;
-      padding: 10px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
+button {
+  padding: 10px;
+  border: none;
+  background: #ffd6e0;
+  border-radius: 10px;
+  cursor: pointer;
+}
 
-    .done {
-      text-decoration: line-through;
-      color: #aaa;
-    }
-  </style>
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  background: #f9f0ff;
+  margin: 8px 0;
+  padding: 10px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.done {
+  text-decoration: line-through;
+  color: #aaa;
+}
+</style>
 </head>
+
 <body>
 
-  <div class="container">
-    <h1>🌷 My ToDo</h1>
+<div class="container">
 
-    <input id="taskInput" placeholder="やること入力..." />
-    <button onclick="addTask()">追加</button>
+  <!-- 上の画像（ここに三浦大輔の画像） -->
+  <img src="miura.png" class="main">
 
-    <ul id="taskList"></ul>
-  </div>
+  <h1>🌷 My ToDo</h1>
 
-  <script>
-    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+  <input id="taskInput" placeholder="やること入力..." />
+  <button onclick="addTask()">追加</button>
 
-    function save() {
-      localStorage.setItem("tasks", JSON.stringify(tasks));
-    }
+  <ul id="taskList"></ul>
+</div>
 
-    function render() {
-      const list = document.getElementById("taskList");
-      list.innerHTML = "";
+<script>
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-      tasks.forEach((task, index) => {
-        const li = document.createElement("li");
+function save() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
 
-        const span = document.createElement("span");
-        span.textContent = task.text;
-        if (task.done) span.classList.add("done");
+function render() {
+  const list = document.getElementById("taskList");
+  list.innerHTML = "";
 
-        span.onclick = () => {
-          task.done = !task.done;
-          save();
-          render();
-        };
+  tasks.forEach((task, index) => {
+    const li = document.createElement("li");
 
-        const del = document.createElement("button");
-        del.textContent = "×";
-        del.onclick = () => {
-          tasks.splice(index, 1);
-          save();
-          render();
-        };
+    const left = document.createElement("div");
+    left.className = "left";
 
-        li.appendChild(span);
-        li.appendChild(del);
-        list.appendChild(li);
-      });
-    }
+    // アイコン（状態で変化）
+    const icon = document.createElement("span");
+    icon.textContent = task.done ? "😴" : "🐰";
 
-    function addTask() {
-      const input = document.getElementById("taskInput");
-      if (input.value.trim() === "") return;
+    const text = document.createElement("span");
+    text.textContent = task.text;
+    if (task.done) text.classList.add("done");
 
-      tasks.push({ text: input.value, done: false });
-      input.value = "";
+    text.onclick = () => {
+      task.done = !task.done;
       save();
       render();
-    }
+    };
 
-    render();
-  </script>
+    left.appendChild(icon);
+    left.appendChild(text);
+
+    const del = document.createElement("button");
+    del.textContent = "×";
+    del.onclick = () => {
+      tasks.splice(index, 1);
+      save();
+      render();
+    };
+
+    li.appendChild(left);
+    li.appendChild(del);
+
+    list.appendChild(li);
+  });
+}
+
+function addTask() {
+  const input = document.getElementById("taskInput");
+  if (input.value.trim() === "") return;
+
+  tasks.push({ text: input.value, done: false });
+  input.value = "";
+  save();
+  render();
+}
+
+render();
+</script>
 
 </body>
 </html>
